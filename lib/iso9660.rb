@@ -204,22 +204,22 @@ class ISO
         
         buffer = stream.read(length)
         
-        @extended_attribute_length = buffer[1]
+        @extended_attribute_length = buffer[1..1].unpack("C")[0]
         @extent_lba = Endian.select( buffer[2...10].unpack("VN") )
         @data_length = Endian.select( buffer[10...18].unpack("VN") )
         @time = buffer[18...25]
         
-        flags = buffer[25]
+        flags = buffer[25..25].unpack("C")[0]
         @flags = []
         FLAGS.each do | flag, value |
           if flags & value != 0 then @flags.push(flag) end
         end
         
-        @interleaved_unit_size = buffer[26]
-        @interleaved_gap_size = buffer[27]
+        @interleaved_unit_size = buffer[26..26].unpack("C")[0]
+        @interleaved_gap_size = buffer[27..27].unpack("C")[0]
         @volume_sequence_number = Endian.select( buffer[28...32].unpack("vn") )
         
-        file_identifier_length = buffer[32]
+        file_identifier_length = buffer[32..32].unpack("C")[0]
         file_identifier_end = 33 + file_identifier_length
         @file_identifier = buffer[33...file_identifier_end]
         #if the length left in the entry leaves data unaccounted for, we'll preserve it in a padding field
